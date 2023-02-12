@@ -1,6 +1,7 @@
 from sentinelhub import SHConfig
 import datetime
 import os
+import config
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,17 +21,18 @@ from sentinelhub import (
 # The following is not a package. It is a file utils.py which should be in the same folder as this notebook.
 from utils import plot_image
 
+sentinel_config = SHConfig()
 
-config = SHConfig()
+sentinel_config.instance_id = config.Config().get("instance_id")
+sentinel_config.sh_client_id = config.Config().get("client_id")
+sentinel_config.sh_client_secret = config.Config().get("client_secret")
 
-config.instance_id = '*'
-config.sh_client_id = '*'
-config.sh_client_secret = '*'
-
-if not config.sh_client_id or not config.sh_client_secret:
+if not sentinel_config.sh_client_id or not sentinel_config.sh_client_secret:
     print("Warning! To use Process API, please provide the credentials (OAuth client ID and client secret).")
 
-betsiboka_coords_wgs84 = [46.16, -16.15, 46.51, -15.58]
+# betsiboka_coords_wgs84 = [46.16, -16.15, 46.51, -15.58]
+betsiboka_coords_wgs84 = [-58.565922,-34.710613,-58.417607,-34.646311]
+
 resolution = 60
 betsiboka_bbox = BBox(bbox=betsiboka_coords_wgs84, crs=CRS.WGS84)
 betsiboka_size = bbox_to_dimensions(betsiboka_bbox, resolution=resolution)
@@ -67,7 +69,7 @@ request_true_color = SentinelHubRequest(
     responses=[SentinelHubRequest.output_response("default", MimeType.PNG)],
     bbox=betsiboka_bbox,
     size=betsiboka_size,
-    config=config,
+    config=sentinel_config,
 )
 
 true_color_imgs = request_true_color.get_data()
