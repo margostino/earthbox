@@ -134,3 +134,4 @@ config.yml
 
 .DS_Store
 .data/
+data/
