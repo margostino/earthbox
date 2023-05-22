@@ -3,7 +3,7 @@ from skyfield.api import Topos, load
 # Load TLE data (replace with specific TLE lines)
 filepath = "../data/last_30_days_launches.tle"
 satellites = load.tle_file(filepath)
-satellite = satellites[15]
+# satellite = satellites[15]
 
 # Get your desired time (UTC)
 ts = load.timescale()
@@ -33,18 +33,19 @@ with open('../data/last_30_days_launches.csv', 'w') as f:
 
     writer.writerow(["Satellite", "Latitude", "Longitude"])
     for i in range(30):
-        date = now - timedelta(days=i)
-        # convert datetime to Time
-        t = ts.utc(date.year, date.month, date.day, date.hour, date.minute, date.second)
-        geocentric = satellite.at(t)
-        x, y, z = geocentric.position.km
-        subpoint = geocentric.subpoint()
-        latitude = subpoint.latitude.degrees
-        longitude = subpoint.longitude.degrees
-        altitude = subpoint.elevation.km
+        for satellite in satellites:
+            date = now - timedelta(days=i)
+            # convert datetime to Time
+            t = ts.utc(date.year, date.month, date.day, date.hour, date.minute, date.second)
+            geocentric = satellite.at(t)
+            x, y, z = geocentric.position.km
+            subpoint = geocentric.subpoint()
+            latitude = subpoint.latitude.degrees
+            longitude = subpoint.longitude.degrees
+            altitude = subpoint.elevation.km
 
-        print(f"Latitude {latitude}\nLongitude {longitude}\nAltitude {altitude}")
-        writer.writerow([satellite.name, latitude, longitude])
+            print(f"Latitude {latitude}\nLongitude {longitude}\nAltitude {altitude}")
+            writer.writerow([satellite.name, latitude, longitude])
 
 
 
